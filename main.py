@@ -1,5 +1,6 @@
 import pandas as ps
 import pycountry
+import pgeocode
 
 print("hello world")
 
@@ -33,5 +34,14 @@ for c in country_col:
     new_countries.append(country.alpha_2)
 
 
-for s in set(new_countries):
-    print(s)
+#for s in set(new_countries):
+#    print(s)
+
+coords = []
+for country_code, postal_code in zip(new_countries, stripped_zips):
+    nomi = pgeocode.Nominatim(country_code)
+    postal_code_info = nomi.query_postal_code(postal_code)
+    coords.append([postal_code_info.latitude, postal_code_info.longitude])
+
+annville = [[40.32927, -76.51553]] * len(new_countries)
+distances_km = pgeocode.haversine_distance(annville, coords)
