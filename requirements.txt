@@ -1,0 +1,15 @@
+certifi
+charset-normalizer
+idna
+numpy
+pandas
+pgeocode
+pycountry
+python-dateutil
+pytz
+requests
+setuptools
+six
+tzdata
+urllib3
+wheel
