@@ -415,7 +415,10 @@ def_remove = ['STUDENT_ID2', 'ZIP', 'SEARCH', 'DEPT_APP3_DEPARTMENT', 'DEPT_APP3
               'ON_SITE_VISIT_TYPE4', 'ON_SITE_VISIT_TYPE5', 'ON_SITE_VISIT_TYPE6', 'ON_SITE_VISIT_TYPE7',
               'ON_SITE_VISIT_TYPE8',
               'ON_SITE_VISIT_TYPE9', 'ON_SITE_VISIT_TYPE10', 'CITIZEN_STATUS',
-              'INITIAL_INTENDED_MAJOR'
+              'INITIAL_INTENDED_MAJOR', 'INST_AWARD_DESC1', 'INST_AWARD_DESC2', 'INST_AWARD_DESC3',
+              'INST_AWARD_DESC4', 'INST_AWARD_DESC5', 'INST_AWARD_DESC6',
+              'INST_AWARD_DESC7', 'INST_AWARD_DESC8', 'INST_AWARD_DESC9',
+              'INST_AWARD_DESC10', 'HS_NAME', 'TRANSFER_INST_NAME', 'FIRSTSOURCE_DATE', 'PRIMARY_STUDENT_ID'
               ]
 prob_remove = ['COUNTY', 'COMMUTER_ADMIT', 'INQUIRY_DATE', 'APP_DATE', 'APP_COMPLETE_DATE',
                'ADMIT_DATE',
@@ -462,7 +465,7 @@ unknown_remove = ['COUNTRY', 'DEFER_APPLICANT_DECISION', 'COND_ACCEPT_DATE', 'CO
 
 ordinal = ['ADMIT_TYPE', 'TERM_ENTERING', 'FT_PT_IND', 'SEARCH_SOURCE',
                                   'APPLICANT_TYPE', 'APP_SOURCE', 'SEX', 'RACE',
-                                  'RELIGION', 'HS_NAME', 'TRANSFER_INST_NAME',
+                                  'RELIGION',
                                   'COUNSELOR_ASSIGNED', 'MAJOR_INTENDED1', 'MAJOR_INTENDED2',
                                   'ACAD_INTEREST1', 'ON_SITE_VISIT_TYPE1', 'ON_SITE_VISIT_TYPE2',
                                   'ON_SITE_VISIT_TYPE3', 'ON_SITE_VISIT_TYPE4', 'ON_SITE_VISIT_TYPE5',

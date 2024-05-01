@@ -39,7 +39,11 @@ df = remove_columns(df, def_remove)
 df = remove_columns(df, prob_remove)
 df = remove_columns(df, unknown_remove)
 
+
+
 # writes the data to an Excel file, easier to filter and view this way
-datatoExcel = pd.ExcelWriter('allRows.xlsx')
-df.to_excel(datatoExcel)
-datatoExcel.close()
+# datatoExcel = pd.ExcelWriter('allRows.xlsx')
+# df.to_excel(datatoExcel)
+# datatoExcel.close()
+
+df.to_csv('CSV_files/dataframe_cleaned')
