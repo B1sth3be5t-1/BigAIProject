@@ -296,31 +296,6 @@ def sum_scholarship(df):
         df.at[index, 'SCHOLARSHIP_AMOUNT_TOTAL'] = total
     return df
 
-
-def classify_admit_type(df):
-    pass
-
-
-def classify_ft(df):
-    pass
-
-
-def classify_search_source(df):
-    pass
-
-
-def classify_app_source(df):
-    pass
-
-
-def classify_sex(df):
-    pass
-
-
-def classify_race(df):
-    pass
-
-
 def visits_attended(df):
     attended_columns = ['ON_SITE_VISIT_ATTENDED1', 'ON_SITE_VISIT_ATTENDED2', 'ON_SITE_VISIT_ATTENDED3',
                         'ON_SITE_VISIT_ATTENDED4', 'ON_SITE_VISIT_ATTENDED5',
@@ -358,6 +333,41 @@ def visits_attended(df):
 def remove_columns(data, label_list):
     data = data.drop(label_list, axis=1)
     return data
+
+def make_categorical(df, column):
+    df[column] = df[column].fillna(-1)  # Handles N/A
+    cat = list(pd.Categorical(df[column], categories=df[column].unique(), ordered=True).categories)
+    cat.insert(0, "N/A")
+    df[column] = pd.Categorical(df[column], categories=df[column].unique(), ordered=True).codes
+    return df[column], create_key(df[column], cat)
+
+
+def convert_to_ordinal(df, col):
+    df[col], key = make_categorical(df, col)
+    return df, key
+
+def convert_for(cols, df):
+    for x in cols:
+        t, keys = convert_to_ordinal(df, x)
+        df.replace(to_replace=keys, inplace=True)
+    return df
+
+
+def sum_scholarship(df):
+    scholCols = ['INST_AWARD_AMOUNT1', 'INST_AWARD_AMOUNT2', 'INST_AWARD_AMOUNT3',
+                 'INST_AWARD_AMOUNT4', 'INST_AWARD_AMOUNT5',
+                 'INST_AWARD_AMOUNT6', 'INST_AWARD_AMOUNT7', 'INST_AWARD_AMOUNT8',
+                 'INST_AWARD_AMOUNT9', 'INST_AWARD_AMOUNT10']
+    df['SCHOLARSHIP_AMOUNT_TOTAL'] = 0
+
+    for index, row in df.iterrows():
+        total = 0
+        for col in scholCols:
+            if pd.notnull(row[col]):
+                total += row[col]
+
+        df.at[index, 'SCHOLARSHIP_AMOUNT_TOTAL'] = total
+    return df
 
 
 def_remove = ['STUDENT_ID2', 'ZIP', 'SEARCH', 'DEPT_APP3_DEPARTMENT', 'DEPT_APP3_STATUS', 'BUMP_2017',
@@ -398,23 +408,19 @@ def_remove = ['STUDENT_ID2', 'ZIP', 'SEARCH', 'DEPT_APP3_DEPARTMENT', 'DEPT_APP3
               'COMM_5_DATE', 'COMM_6_DATE', 'COMM_7_DATE', 'COMM_8_DATE', 'COMM_9_DATE', 'COMM_10_DATE',
               'COMM_11_DATE', 'COMM_12_DATE', 'COMM_13_DATE', 'COMM_14_DATE', 'COMM_15_DATE', 'COMM_16_DATE',
               'COMM_17_DATE', 'COMM_18_DATE', 'COMM_19_DATE', 'COMM_20_DATE',
-              'The_End', 'INST_AWARD_DESC1', 'INST_AWARD_DESC2', 'INST_AWARD_DESC3', 'INST_AWARD_DESC4',
-              'INST_AWARD_DESC5', 'INST_AWARD_DESC6', 'INST_AWARD_DESC7', 'INST_AWARD_DESC8', 'INST_AWARD_DESC9',
-              'INST_AWARD_DESC10',
+              'The_End', 'INST_AWARD_DESC1',
 
-              'FIRSTSOURCE', 'INITIAL_NEED_BASED_PACKAGE_MAIL_DATE', 'FM_DEP_IND', 'VIRTUAL_VISIT_TYPE1',
-              'VIRTUAL_VISIT_DATE1',
-              'COMM_1_DATE_M1', 'MAJOR_INTENDED2', 'ON_SITE_VISIT_TYPE1', 'ON_SITE_VISIT_TYPE2', 'ON_SITE_VISIT_TYPE3',
+              'INITIAL_NEED_BASED_PACKAGE_MAIL_DATE', 'FM_DEP_IND',
+              'COMM_1_DATE_M1', 'ON_SITE_VISIT_TYPE1', 'ON_SITE_VISIT_TYPE2', 'ON_SITE_VISIT_TYPE3',
               'ON_SITE_VISIT_TYPE4', 'ON_SITE_VISIT_TYPE5', 'ON_SITE_VISIT_TYPE6', 'ON_SITE_VISIT_TYPE7',
               'ON_SITE_VISIT_TYPE8',
-              'ON_SITE_VISIT_TYPE9', 'ON_SITE_VISIT_TYPE10', 'COUNSELOR_ASSIGNED', 'RELIGION', 'CITIZEN_STATUS',
-              'INITIAL_INTENDED_MAJOR', 'DEPT_APP1_DEPARTMENT', 'DEPT_APP2_DEPARTMENT', 'DEPT_APP1_STATUS'
+              'ON_SITE_VISIT_TYPE9', 'ON_SITE_VISIT_TYPE10', 'CITIZEN_STATUS',
+              'INITIAL_INTENDED_MAJOR'
               ]
-prob_remove = ['COUNTY', 'TERM_ENTERING', 'COMMUTER_ADMIT', 'INQUIRY_DATE', 'APP_DATE', 'APP_COMPLETE_DATE',
+prob_remove = ['COUNTY', 'COMMUTER_ADMIT', 'INQUIRY_DATE', 'APP_DATE', 'APP_COMPLETE_DATE',
                'ADMIT_DATE',
                'LEGACY_FAMILY_DESC', 'FIRST_GENERATION_CLIENT', 'ACAD_INTEREST1',
-               'DEPT_APP2_STATUS',
-               'SportsAndRank', 'FICE1', 'FICE11']
+               'FICE1', 'FICE11']
 
 not_remove = ['PRIMARY_STUDENT_ID', 'FILE_GENESIS_DATE', 'ADMIT_TYPE', 'INTERNATIONAL', 'CITIZEN_STATUS', 'FT_PT_IND',
               'COMMUTER_APP', 'SEARCH_SOURCE',
@@ -437,11 +443,10 @@ not_remove = ['PRIMARY_STUDENT_ID', 'FILE_GENESIS_DATE', 'ADMIT_TYPE', 'INTERNAT
               'TUITION_REMIISION', 'TUITION_REMIISION_AMOUNT', 'INITIAL_INTENDED_MAJOR1', 'DEP_APP1_DEPARTMENT',
               'DEPT_APP1_STATUS',
               'Unique_Visit_Days_Count', 'Unique_Visit_Days_NoShow_Count', 'Virtual_Visit_Count', 'VIRTUAL_VISIT_DATE1']
-unknown_remove = ['COUNTRY', 'APPLICANT_TYPE', 'DEFER_APPLICANT_DECISION', 'COND_ACCEPT_DATE', 'COND_ACCEPT_REASON',
-                  'WITHDRAWN_DATE', 'DENIED_DATE', 'ENROLLED_IND', 'BIRTHDATE', 'URM', 'HIGH_SCHOOL_CEEB', 'HS_NAME',
+unknown_remove = ['COUNTRY', 'DEFER_APPLICANT_DECISION', 'COND_ACCEPT_DATE', 'COND_ACCEPT_REASON',
+                  'WITHDRAWN_DATE', 'DENIED_DATE', 'ENROLLED_IND', 'BIRTHDATE', 'URM', 'HIGH_SCHOOL_CEEB',
                   'TRANSFER_CEEB',
-                  'TRANSFER_INST_NAME', 'HS_GPA_SCALE', 'HS_ORIG_GPA', 'HS_GPA_SCRUBBED', 'HS_RANK', 'HS_SIZE',
-                  'NEED_ANALYSIS_USED',
+                  'HS_GPA_SCALE', 'HS_ORIG_GPA', 'HS_GPA_SCRUBBED', 'HS_RANK', 'HS_SIZE',
                   'EFC_USED_FOR_PACKAGING', 'VERIFICATION_SELECTED', 'VERIFICATION_COMPLETE', 'IGRANT_FOR_DISCOUNT',
                   'INST_NON_NEED_MONEY_FOR_MERIT', 'INST_NON_NEED_MONEY_FOR_MERIT_DATE', 'PELL', 'SEOG', 'WORK_AMOUNT',
                   'LOAN_AMOUNT_SUB', 'LOAN_AMOUNT_UNSUB', 'LOAN_AMOUNT_PERKINS',
@@ -449,11 +454,31 @@ unknown_remove = ['COUNTRY', 'APPLICANT_TYPE', 'DEFER_APPLICANT_DECISION', 'COND
                   'LOAN_AMOUNT_PARENT_PLUS', 'TUITION_EXCHANGE', 'TUITION_EXCHANGE_AMOUNT', 'APPEAL_FLAG1',
                   'APPEAL_DATE1',
                   'APPEAL_AMOUNT1',
-                  'APPEAL_OUTCOME_DESC1', 'FINAL_ENROLLED_IND', 'SCHOLARSHIP_EVEN_IF_NOT_PACKAGED',
+                  'FINAL_ENROLLED_IND', 'SCHOLARSHIP_EVEN_IF_NOT_PACKAGED',
                   'TUITION_EVEN_IF_NOT_PACKAGED', 'FA_INTENT_NEED', 'Calc_Scholarship_Amount',
                   'Scholarship_SAT_Issue_Fall_2017__c',
-                  'INITIAL_INTENDED_MAJOR2', 'Exclude_Tests', 'WILL_NOT_FILE', 'APPEAL_OUTCOME_CODE1',
+                   'Exclude_Tests', 'WILL_NOT_FILE',
                   'LOAN_AMOUNT_PARENT_PRIVATE_ALTERNATIVE', 'Scholarship_Override__c', 'CALC_ACRK', 'CALC_NDRK']
+
+ordinal = ['ADMIT_TYPE', 'TERM_ENTERING', 'FT_PT_IND', 'SEARCH_SOURCE',
+                                  'APPLICANT_TYPE', 'APP_SOURCE', 'SEX', 'RACE',
+                                  'RELIGION', 'HS_NAME', 'TRANSFER_INST_NAME',
+                                  'COUNSELOR_ASSIGNED', 'MAJOR_INTENDED1', 'MAJOR_INTENDED2',
+                                  'ACAD_INTEREST1', 'ON_SITE_VISIT_TYPE1', 'ON_SITE_VISIT_TYPE2',
+                                  'ON_SITE_VISIT_TYPE3', 'ON_SITE_VISIT_TYPE4', 'ON_SITE_VISIT_TYPE5',
+                                  'ON_SITE_VISIT_TYPE6',
+                                  'ON_SITE_VISIT_TYPE7',
+                                  'ON_SITE_VISIT_TYPE8',
+                                  'ON_SITE_VISIT_TYPE9',
+                                  'ON_SITE_VISIT_TYPE10', 'FIRSTSOURCE', 'NEED_ANALYSIS_USED',
+                                  'INST_AWARD_DESC1', 'INST_AWARD_DESC2', 'INST_AWARD_DESC3',
+                                  'INST_AWARD_DESC4', 'INST_AWARD_DESC5', 'INST_AWARD_DESC6',
+                                  'INST_AWARD_DESC7', 'INST_AWARD_DESC8', 'INST_AWARD_DESC9',
+                                  'INST_AWARD_DESC10', 'APPEAL_OUTCOME_DESC1', 'INITIAL_INTENDED_MAJOR',
+                                  'DEPT_APP1_DEPARTMENT', 'INITIAL_INTENDED_MAJOR2', 'DEPT_APP1_STATUS',
+                                  'DEPT_APP2_DEPARTMENT', 'DEPT_APP2_STATUS', 'SportsAndRank', 'VIRTUAL_VISIT_DATE1',
+                                  'VIRTUAL_VISIT_TYPE1', 'APPEAL_OUTCOME_CODE1'
+                                  ]
 
 
 # takes a single column name and its keys and writes them to a new csv file

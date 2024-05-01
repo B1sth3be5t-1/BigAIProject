@@ -1,7 +1,6 @@
 from clean_data import *
 
 # get all 3 years worth of csv's
-
 data2021 = load("CSV_Files/fall-2021-noaddr.csv")
 data2022 = load("CSV_Files/fall-2022-noaddr.csv")
 data2023 = load("CSV_Files/fall-2023-noaddr.csv")
@@ -28,15 +27,13 @@ df = visits_attended(df)
 # # get distances from Annville to zip codes
 # df = getDistances(df)
 
-# set majors for students
-columns = ["MAJOR_INTENDED1"]
-df, key = convert_to_ordinal(df, ["MAJOR_INTENDED1"])
-
 # get counts of extracurriculars
 df = extra_curriculars(df)
 
 # aggregate total scholarship amount
 df = sum_scholarship(df)
+
+df = convert_for(ordinal, df)
 
 df = remove_columns(df, def_remove)
 df = remove_columns(df, prob_remove)
